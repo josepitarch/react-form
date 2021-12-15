@@ -1,23 +1,65 @@
 import './App.css';
-import { useRef } from 'react'
+import { useState } from 'react'
 
 function App() {
-  const input = useRef()
-  const file = useRef()
-  const submit = (e) => {
-    const form = new FormData()
-    form.append('archivo', file.current.files[0])
-    form.append('campo', input.current.value)
-
-    fetch('/endpoint', { method: 'POST', body: form })
+  const [value, setValue] = useState({
+    normal: '',
+    texto: '',
+    select: '',
+    check: false,
+    estado: 'triste'
+  })
+  const handleChange = ({ target }) => {
+    setValue({
+      ...value,
+      [target.name]: target.type === 'checkbox'
+      ? target.checked
+      : target.value
+    })
   }
+  console.log(value);
+
   return (
     <div>
-      <input type='text' name='campo' ref={ input }></input>
-      <input type="file" name="" id="" ref={ file } />
-      <input type="submit" value="Enviar" onClick={ submit } />
+      { value.length < 5 ? <span>Longitud menor a 5</span> : null }
+      <input type='text' name='normal' value={ value.normal } onChange={ handleChange }/>
+      <textarea name='texto' value = { value.texto } onChange={ handleChange } />
+
+      <select value={ value.select } name='select' onChange={ handleChange }>
+        <option value=''>-- Seleccione --</option>
+        <option value='chanchofeliz'>Chancho feliz</option>
+        <option value='chanchitofeliz'>Chanchito feliz</option>
+        <option value='chanchitotriste'>Chanchito triste</option>
+      </select>
+
+      <input type="checkbox" name="check" onChange={ handleChange } checked={ value.check } id="" />
+
+      <div>
+        <label>Chancho</label>
+        <input
+          onChange={ handleChange }
+          type="radio"
+          name="estado"
+          value={ 'feliz' }
+          checked={ value.estado === 'feliz'}
+        /> Feliz
+        <input
+          onChange={ handleChange }
+          type="radio"
+          name="estado"
+          value={ 'triste' }
+          checked={ value.estado === 'triste'}
+        /> Triste
+        <input
+          onChange={ handleChange }
+          type="radio"
+          name="estado"
+          value={ 'felipe' }
+          checked={ value.estado === 'felipe'}
+        /> Felipe
+      </div>
     </div>
-  );
+  )
 }
 
 export default App;
